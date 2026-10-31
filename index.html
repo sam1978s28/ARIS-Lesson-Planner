@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Rasheed International School - Teacher Lesson Planning & Monitoring Software</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            no-print, header, nav, footer, .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .shadow-lg, .shadow-md, .shadow { box-shadow: none !important; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Top Header Banner -->
+    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-xl border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide">Al Rasheed International School</h1>
+                    <p class="text-xs text-blue-200 font-medium">Lesson Planning & Monitoring Portal (Reg No: RECO002713)</p>
+                </div>
+            </div>
+
+            <!-- Role & User Switcher / Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Role Selector -->
+                <div class="flex items-center bg-white/10 rounded-lg p-1 border border-white/20">
+                    <button onclick="switchRole('teacher')" id="btnRoleTeacher" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-white text-blue-900 shadow">
+                        <i class="fa-solid fa-chalkboard-user mr-1.5"></i> Teacher
+                    </button>
+                    <button onclick="switchRole('coordinator')" id="btnRoleCoord" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-white hover:bg-white/10">
+                        <i class="fa-solid fa-user-tie mr-1.5"></i> Coordinator
+                    </button>
+                    <button onclick="switchRole('principal')" id="btnRolePrincipal" class="px-3 py-1.5 rounded-
