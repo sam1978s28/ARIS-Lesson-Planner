@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Rasheed International School - Teacher Lesson Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            no-print, header, nav, footer, .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-xl border border-white/20">
+                    <i class="fa-solid fa-chalkboard-user text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold">Al Rasheed International School</h1>
+                    <p class="text-xs text-blue-200">Teacher Lesson Planning Portal</p>
+                </div>
+            </div>
+            <div>
+                <span class="bg-blue-800 text-blue-100 text-xs px-3 py-1.5 rounded-full font-semibold border border-blue-700">
+                    <i class="fa-solid fa-user-check mr-1"></i> Teacher Workspace
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+        <!-- Teacher Identity & Selection Bar -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <div id="userAvatar" class="w-12 h-12 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-lg border border-blue-200">
+                    AK
+                </div>
+                <div>
+                    <h2 id="currentUserNameDisplay" class="font-bold text-lg text-slate-900">Amina Khan</h2>
+                    <p class="text-xs text-slate-500">Select your profile to view or submit lesson plans</p>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <label class="block text-xs font-semibold text-slate-500 mb-1">Select Your Name:</label>
+                <select id="activeTeacherSelect" onchange="changeActiveTeacher()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium w-full sm:w-64">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-slate-200 space-x-6">
+            <button onclick="switchTab('builder')" id="tabBuilder" class="pb-3 px-1 border-b-2 border-blue-600 text-blue-600 font-semibold text-sm flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i> Lesson Plan Builder
+            </button>
+            <button onclick="switchTab('myPlans')" id="tabMyPlans" class="pb-3 px-1 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm flex items-center gap-2">
+                <i class="fa-solid fa-folder-open"></i> My Saved & Submitted Plans
+            </button>
+        </div>
+
+        <!-- TAB 1: BUILDER -->
+        <div id="sectionBuilder" class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Date</label>
+                    <input type="date" id="lessonDate" value="2026-10-31" onchange="loadCurrentForm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Class / Grade</label>
+                    <select id="lessonClass" onchange="loadCurrentForm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold">
+                        <option value="Nursery">Nursery</option>
+                        <option value="LKG">LKG</option>
+                        <option value="UKG">UKG</option>
+                        <option value="Class 1">Class 1</option>
+                        <option value="Class 2">Class 2</option>
+                        <option value="Class 3">Class 3</option>
+                        <option value="Class 4" selected>Class 4</option>
+                        <option value="Class 5">Class 5</option>
+                        <option value="Class 6">Class 6</option>
+                        <option value="Class 7">Class 7</option>
+                        <option value="Class 8">Class 8</option>
+                        <option value="Class 9">Class 9</option>
+                        <option value="Class 10">Class 10</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Subject</label>
+                    <select id="lessonSubject" onchange="loadCurrentForm()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold">
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="EVS">EVS</option>
+                        <option value="SST">SST</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="Urdu">Urdu</option>
+                        <option value="Kashmiri">Kashmiri</option>
+                        <option value="Art & Craft">Art & Craft</option>
+                        <option value="Circle time">Circle time</option>
+                        <option value="Islamiah">Islamiah</option>
+                        <option value="Computers">Computers</option>
+                        <option value="Science Lab">Science Lab</option>
+                        <option value="Sports/Games/Activity">Sports/Games/Activity</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Topic / Title</label>
+                    <input type="text" id="lessonTopic" placeholder="e.g. Fractions & Decimals" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold">
+                </div>
+            </div>
+
+            <!-- 6 Core Sections -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">1. Aim (Objective & Goals)</label>
+                        <span id="count_aim" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_aim" oninput="updateWordCount('aim')" rows="4" placeholder="What are the specific learning objectives? (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">2. Action (Pedagogy & Delivery)</label>
+                        <span id="count_action" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_action" oninput="updateWordCount('action')" rows="4" placeholder="Detail the step-by-step teaching delivery. (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">3. Analysis (Checking Understanding)</label>
+                        <span id="count_analysis" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_analysis" oninput="updateWordCount('analysis')" rows="4" placeholder="How will you check understanding & misconceptions? (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">4. Application (Real-World)</label>
+                        <span id="count_application" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_application" oninput="updateWordCount('application')" rows="4" placeholder="How do students apply this knowledge? (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">5. Assessment (Exit Check)</label>
+                        <span id="count_assessment" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_assessment" oninput="updateWordCount('assessment')" rows="4" placeholder="What formative assessment tools are used? (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="font-bold text-sm text-blue-900">6. Resources & Materials</label>
+                        <span id="count_resources" class="text-xs text-slate-400">0 words</span>
+                    </div>
+                    <textarea id="val_resources" oninput="updateWordCount('resources')" rows="4" placeholder="List textbooks, charts, digital aids. (1-1000 words)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+            </div>
+
+            <!-- Classwork & Homework -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+                <h3 class="font-bold text-base text-slate-900 border-b border-slate-200 pb-3"><i class="fa-solid fa-list-check text-blue-600"></i> Assignments & Media</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Classwork Tasks</label>
+                        <textarea id="val_classwork" rows="3" placeholder="Specify classwork exercises..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Homework Assignment</label>
+                        <textarea id="val_homework" rows="3" placeholder="Specify homework practice..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Reference Video Links</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="url" id="videoLinkInput" placeholder="https://youtube.com/..." class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                            <button onclick="addVideoLink()" type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Add</button>
+                        </div>
+                        <div id="videoLinksList" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Attach Worksheet / Document</label>
+                        <div class="flex items-center gap-3">
+                            <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg px-4 py-2.5 text-xs font-semibold text-slate-700 flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-blue-600"></i> Choose File
+                                <input type="file" id="documentFileInput" onchange="handleFileUpload(event)" class="hidden" accept=".pdf,.doc,.docx,.jpg,.png">
+                            </label>
+                            <span id="attachedFileName" class="text-xs text-slate-500 italic">No file attached</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="saveDraft()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-semibold">
+                        <i class="fa-regular fa-floppy-disk"></i> Save Draft
+                    </button>
+                    <button onclick="deleteCurrentPlan()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-4 py-2.5 rounded-lg text-sm font-semibold">
+                        <i class="fa-regular fa-trash-can"></i> Delete Plan
+                    </button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="printLessonPlan()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-semibold">
+                        <i class="fa-solid fa-print"></i> Print
+                    </button>
+                    <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold">
+                        <i class="fa-solid fa-download"></i> Download PDF
+                    </button>
+                    <button onclick="submitLessonPlan()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Lesson Plan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MY PLANS -->
+        <div id="sectionMyPlans" class="space-y-6 hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="font-bold text-lg text-slate-900 mb-4">My Lesson Plan Archive</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-xs font-bold uppercase text-slate-500 bg-slate-50">
+                                <th class="p-3">Date</th>
+                                <th class="p-3">Class</th>
+                                <th class="p-3">Subject</th>
+                                <th class="p-3">Topic</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Admin Remarks</th>
+                                <th class="p-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myPlansTableBody" class="divide-y divide-slate-200 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Al Rasheed International School Awantipora • Teacher Portal &copy; 2026
+    </footer>
+
+    <script>
+        const defaultFaculty = ["Amina Khan", "Rajesh Kumar", "Priya Sharma", "Bilal Ahmed", "Sunita Devi", "Tariq Shah", "Mehak Zahra", "Zahoor Malik", "Sabiha Nazir", "Owais Ahmad", "Dr. Farooq", "Imran Khan"];
+        let facultyList = JSON.parse(localStorage.getItem('alrasheed_faculty_list')) || defaultFaculty;
+        let currentTeacherName = facultyList[0];
+        let activeVideoLinks = [];
+        let attachedFileNameVal = 'No file attached';
+
+        window.onload = function() {
+            const select = document.getElementById('activeTeacherSelect');
+            select.innerHTML = facultyList.map(n => `<option value="${n}">${n}</option>`).join('');
+            select.value = currentTeacherName;
+            loadCurrentForm();
+            renderMyPlans();
+        };
+
+        function changeActiveTeacher() {
+            currentTeacherName = document.getElementById('activeTeacherSelect').value;
+            document.getElementById('currentUserNameDisplay').innerText = currentTeacherName;
+            document.getElementById('userAvatar').innerText = currentTeacherName.split(' ').map(n => n[0]).join('');
+            loadCurrentForm();
+            renderMyPlans();
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('sectionBuilder').classList.add('hidden');
+            document.getElementById('sectionMyPlans').classList.add('hidden');
+            document.getElementById('tabBuilder').className = 'pb-3 px-1 border-b-2 border-transparent text-slate-500 font-semibold text-sm flex items-center gap-2';
+            document.getElementById('tabMyPlans').className = 'pb-3 px-1 border-b-2 border-transparent text-slate-500 font-semibold text-sm flex items-center gap-2';
+
+            if (tabId === 'builder') {
+                document.getElementById('sectionBuilder').classList.remove('hidden');
+                document.getElementById('tabBuilder').className = 'pb-3 px-1 border-b-2 border-blue-600 text-blue-600 font-semibold text-sm flex items-center gap-2';
+            } else {
+                document.getElementById('sectionMyPlans').classList.remove('hidden');
+                document.getElementById('tabMyPlans').className = 'pb-3 px-1 border-b-2 border-blue-600 text-blue-600 font-semibold text-sm flex items-center gap-2';
+                renderMyPlans();
+            }
+        }
+
+        function updateWordCount(fieldKey) {
+            const text = document.getElementById(`val_${fieldKey}`).value.trim();
+            document.getElementById(`count_${fieldKey}`).innerText = `${text === '' ? 0 : text.split(/\s+/).length} words`;
+        }
+
+        function addVideoLink() {
+            const input = document.getElementById('videoLinkInput');
+            if (input.value.trim()) {
+                activeVideoLinks.push(input.value.trim());
+                input.value = '';
+                renderVideoLinks();
+            }
+        }
+        function removeVideoLink(i) { activeVideoLinks.splice(i, 1); renderVideoLinks(); }
+        function renderVideoLinks() {
+            document.getElementById('videoLinksList').innerHTML = activeVideoLinks.map((l, i) => `
+                <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs px-2.5 py-1 rounded-full border border-blue-200">
+                    <a href="${l}" target="_blank" class="underline truncate max-w-[150px]">${l}</a>
+                    <button onclick="removeVideoLink(${i})" class="text-rose-500 font-bold ml-1">&times;</button>
+                </span>
+            `).join('');
+        }
+
+        function handleFileUpload(e) {
+            if (e.target.files[0]) {
+                attachedFileNameVal = e.target.files[0].name;
+                document.getElementById('attachedFileName').innerText = attachedFileNameVal;
+                document.getElementById('attachedFileName').className = 'text-xs text-emerald-600 font-semibold';
+            }
+        }
+
+        function getFormData(status = 'Draft') {
+            const date = document.getElementById('lessonDate').value;
+            const className = document.getElementById('lessonClass').value;
+            const subject = document.getElementById('lessonSubject').value;
+            const topic = document.getElementById('lessonTopic').value || 'Untitled';
+            return {
+                id: `plan_${currentTeacherName.toLowerCase().replace(/\s+/g, '_')}_${className.toLowerCase().replace(/\s+/g, '_')}_${subject.toLowerCase().replace(/\s+/g, '_')}_${date}`,
+                teacherName: currentTeacherName, className, subject, date, topic,
+                aim: document.getElementById('val_aim').value,
+                action: document.getElementById('val_action').value,
+                analysis: document.getElementById('val_analysis').value,
+                application: document.getElementById('val_application').value,
+                assessment: document.getElementById('val_assessment').value,
+                resources: document.getElementById('val_resources').value,
+                classwork: document.getElementById('val_classwork').value,
+                homework: document.getElementById('val_homework').value,
+                videoLinks: [...activeVideoLinks], fileName: attachedFileNameVal, status, adminRemarks: ''
+            };
+        }
+
+        function saveDraft() { savePlan(getFormData('Draft')); alert('Draft saved successfully!'); }
+        function submitLessonPlan() { savePlan(getFormData('Submitted')); alert('Lesson plan submitted successfully!'); switchTab('myPlans'); }
+
+        function savePlan(plan) {
+            let plans = JSON.parse(localStorage.getItem('alrasheed_lesson_plans')) || [];
+            let idx = plans.findIndex(p => p.id === plan.id);
+            if (idx >= 0) { plan.adminRemarks = plans[idx].adminRemarks || ''; plans[idx] = plan; }
+            else { plans.push(plan); }
+            localStorage.setItem('alrasheed_lesson_plans', JSON.stringify(plans));
+            renderMyPlans();
+        }
+
+        function deleteCurrentPlan() {
+            if (confirm('Delete this lesson plan?')) {
+                let plan = getFormData();
+                let plans = JSON.parse(localStorage.getItem('alrasheed_lesson_plans')) || [];
+                plans = plans.filter(p => p.id !== plan.id);
+                localStorage.setItem('alrasheed_lesson_plans', JSON.stringify(plans));
+                clearForm(); alert('Deleted.'); renderMyPlans();
+            }
+        }
+
+        function clearForm() {
+            ['lessonTopic','val_aim','val_action','val_analysis','val_application','val_assessment','val_resources','val_classwork','val_homework'].forEach(id => document.getElementById(id).value = '');
+            activeVideoLinks = []; renderVideoLinks(); attachedFileNameVal = 'No file attached';
+            document.getElementById('attachedFileName').innerText = attachedFileNameVal;
+            ['aim','action','analysis','application','assessment','resources'].forEach(k => updateWordCount(k));
+        }
+
+        function loadCurrentForm() {
+            let date = document.getElementById('lessonDate').value;
+            let className = document.getElementById('lessonClass').value;
+            let subject = document.getElementById('lessonSubject').value;
+            let plans = JSON.parse(localStorage.getItem('alrasheed_lesson_plans')) || [];
+            let found = plans.find(p => p.id === `plan_${currentTeacherName.toLowerCase().replace(/\s+/g, '_')}_${className.toLowerCase().replace(/\s+/g, '_')}_${subject.toLowerCase().replace(/\s+/g, '_')}_${date}`);
+            
+            if (found) {
+                document.getElementById('lessonTopic').value = found.topic || '';
+                document.getElementById('val_aim').value = found.aim || '';
+                document.getElementById('val_action').value = found.action || '';
+                document.getElementById('val_analysis').value = found.analysis || '';
+                document.getElementById('val_application').value = found.application || '';
+                document.getElementById('val_assessment').value = found.assessment || '';
+                document.getElementById('val_resources').value = found.resources || '';
+                document.getElementById('val_classwork').value = found.classwork || '';
+                document.getElementById('val_homework').value = found.homework || '';
+                activeVideoLinks = found.videoLinks || []; renderVideoLinks();
+                attachedFileNameVal = found.fileName || 'No file attached';
+                document.getElementById('attachedFileName').innerText = attachedFileNameVal;
+            } else { clearForm(); }
+            ['aim','action','analysis','application','assessment','resources'].forEach(k => updateWordCount(k));
+        }
+
+        function printLessonPlan() { window.print(); }
+        function downloadPDF() {
+            let p = getFormData();
+            let blob = new Blob([`AL RASHEED INTERNATIONAL SCHOOL\nTeacher: ${p.teacherName}\nClass: ${p.className}\nSubject: ${p.subject}\nDate: ${p.date}\nTopic: ${p.topic}\n\n1. AIM:\n${p.aim}\n\n2. ACTION:\n${p.action}\n\n3. ANALYSIS:\n${p.analysis}\n\n4. APPLICATION:\n${p.application}\n\n5. ASSESSMENT:\n${p.assessment}\n\n6. RESOURCES:\n${p.resources}`], {type: 'text/plain'});
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `LessonPlan_${p.teacherName}_${p.subject}.txt`; a.click();
+        }
+
+        function renderMyPlans() {
+            let plans = JSON.parse(localStorage.getItem('alrasheed_lesson_plans')) || [];
+            let my = plans.filter(p => p.teacherName === currentTeacherName);
+            document.getElementById('myPlansTableBody').innerHTML = my.length === 0 ? `<tr><td colspan="7" class="p-6 text-center text-slate-400">No plans saved or submitted.</td></tr>` : my.map(p => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-semibold">${p.date}</td>
+                    <td class="p-3 font-bold text-indigo-600">${p.className}</td>
+                    <td class="p-3 font-bold text-blue-600">${p.subject}</td>
+                    <td class="p-3 truncate max-w-xs">${p.topic}</td>
+                    <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${p.status==='Approved'?'bg-emerald-100 text-emerald-700':p.status==='Submitted'?'bg-blue-100 text-blue-700':'bg-slate-100 text-slate-700'}">${p.status}</span></td>
+                    <td class="p-3 text-xs italic text-slate-500">${p.adminRemarks || 'None'}</td>
+                    <td class="p-3 text-right"><button onclick="loadPlan('${p.id}')" class="text-blue-600 font-semibold text-xs">Edit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadPlan(id) {
+            let plans = JSON.parse(localStorage.getItem('alrasheed_lesson_plans')) || [];
+            let p = plans.find(item => item.id === id);
+            if (p) {
+                document.getElementById('lessonDate').value = p.date;
+                document.getElementById('lessonClass').value = p.className;
+                document.getElementById('lessonSubject').value = p.subject;
+                document.getElementById('lessonTopic').value = p.topic;
+                document.getElementById('val_aim').value = p.aim;
+                document.getElementById('val_action').value = p.action;
+                document.getElementById('val_analysis').value = p.analysis;
+                document.getElementById('val_application').value = p.application;
+                document.getElementById('val_assessment').value = p.assessment;
+                document.getElementById('val_resources').value = p.resources;
+                document.getElementById('val_classwork').value = p.classwork;
+                document.getElementById('val_homework').value = p.homework;
+                activeVideoLinks = p.videoLinks || []; renderVideoLinks();
+                switchTab('builder');
+            }
+        }
+    </script>
+</body>
+</html>
