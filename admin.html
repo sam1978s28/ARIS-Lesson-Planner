@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Rasheed International School - Principal & Coordinator Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            no-print, header, nav, footer, .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+    <!-- Login screen -->
+    <div id="loginScreen" class="fixed inset-0 z-[100] bg-slate-100 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-sm p-8">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-900 text-amber-400 text-2xl mb-3"><i class="fa-solid fa-lock"></i></div>
+                <h1 class="text-lg font-bold text-slate-900">Al Rasheed International School</h1>
+                <p class="text-xs text-slate-500">Principal &amp; Coordinator Portal</p>
+            </div>
+            <p id="loginLoading" class="text-center text-sm text-slate-400">Loading&hellip;</p>
+            <form id="loginForm" onsubmit="doLogin(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Username</label>
+                    <input id="loginUser" type="text" autocomplete="username" autocapitalize="none" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Password</label>
+                    <input id="loginPass" type="password" autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm">
+                </div>
+                <p id="loginError" class="text-xs text-rose-600 min-h-[1rem]"></p>
+                <button id="loginBtn" type="submit" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-lg py-2.5 text-sm">Log in</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-amber-900 to-indigo-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-xl border border-white/20">
+                    <i class="fa-solid fa-award text-2xl text-amber-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold">Al Rasheed International School</h1>
+                    <p class="text-xs text-amber-200">Principal & Coordinator Monitoring Dashboard</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="openManageTeachersModal()" class="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/20 flex items-center gap-1.5">
+                    <i class="fa-solid fa-users-gear text-amber-300"></i> Manage Teachers
+                </button>
+                <button onclick="logout()" class="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/20"><i class="fa-solid fa-right-from-bracket text-amber-300"></i> Logout</button>
+                <span class="bg-amber-800 text-amber-100 text-xs px-3 py-1.5 rounded-full font-semibold border border-amber-700">
+                    <i class="fa-solid fa-user-tie mr-1"></i> Admin Access
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Admin Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-900">Daily Teacher Lesson Plan Submissions</h3>
+                    <p class="text-xs text-slate-500">Monitor submissions, review details, print, and leave official feedback remarks.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="date" id="adminFilterDate" onchange="renderAdminDashboard()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold">
+                    <button onclick="renderAdminDashboard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-semibold">Filter Date</button>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                    <p class="text-xs font-bold text-blue-600 uppercase">Total Faculty</p>
+                    <h4 id="statTotalTeachers" class="text-2xl font-extrabold text-blue-900 mt-1">0</h4>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                    <p class="text-xs font-bold text-emerald-600 uppercase">Submitted Today</p>
+                    <h4 id="statSubmittedToday" class="text-2xl font-extrabold text-emerald-900 mt-1">0</h4>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
+                    <p class="text-xs font-bold text-amber-600 uppercase">Pending Submissions</p>
+                    <h4 id="statPendingToday" class="text-2xl font-extrabold text-amber-900 mt-1">0</h4>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-xs font-bold uppercase text-slate-500 bg-slate-50">
+                            <th class="p-3">Teacher Name</th>
+                            <th class="p-3">Class</th>
+                            <th class="p-3">Subject</th>
+                            <th class="p-3">Topic</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3">Remarks</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-slate-200 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Review & Feedback Modal -->
+    <div id="reviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+                <div>
+                    <h3 id="modalTitle" class="font-bold text-lg text-slate-900">Lesson Plan Review</h3>
+                    <p id="modalSubtitle" class="text-xs text-slate-500">Teacher & Class info</p>
+                </div>
+                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+
+            <div id="modalContentBody" class="space-y-4 text-sm text-slate-700"></div>
+
+            <div class="border-t border-slate-200 pt-4 space-y-3">
+                <h4 class="font-bold text-xs uppercase text-slate-500">Principal / Coordinator Feedback</h4>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Status:</label>
+                    <select id="adminStatusSelect" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium">
+                        <option value="Submitted">Submitted</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Needs Revision">Needs Revision</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Official Remarks:</label>
+                    <textarea id="adminRemarksInput" rows="3" placeholder="Enter constructive feedback..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm"></textarea>
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveAdminFeedback()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow">Save Remarks & Status</button>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold"><i class="fa-solid fa-print"></i> Print</button>
+                <button onclick="closeReviewModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-sm font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manage Teachers Modal -->
+    <div id="manageTeachersModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+                <h3 class="font-bold text-lg text-slate-900"><i class="fa-solid fa-users-gear text-blue-600 mr-2"></i> Teacher Onboarding & Management</h3>
+                <button onclick="closeManageTeachersModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                <h4 class="font-bold text-xs uppercase text-slate-600">Onboard New Teacher</h4>
+                <input type="text" id="newTeacherNameInput" placeholder="Full name (e.g. Mahak Sharma)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="newTeacherUsername" placeholder="Username (e.g. mahak)" autocapitalize="none" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                    <input type="text" id="newTeacherPassword" placeholder="Password (min 6)" autocomplete="off" class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                    <p id="addTeacherMsg" class="text-xs text-rose-600 flex-1"></p>
+                    <button id="addTeacherBtn" onclick="addNewTeacher()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Add Teacher</button>
+                </div>
+            </div>
+            <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left border-collapse text-sm">
+                    <tbody id="manageTeachersTableBody" class="divide-y divide-slate-200"></tbody>
+                </table>
+            </div>
+            <div class="flex justify-end"><button onclick="closeManageTeachersModal()" class="bg-slate-200 px-4 py-2 rounded-lg text-sm font-semibold">Done</button></div>
+        </div>
+    </div>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        Al Rasheed International School Awantipora • Admin Portal &copy; 2026
+    </footer>
+
+    <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, updateDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig, EMAIL_DOMAIN, ADMIN_USERNAMES } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let teachers = [];     // all teacher profiles
+let plans = [];        // plans for the selected date
+let unsubPlans = null, unsubTeachers = null;
+let activeModalPlanId = null;
+let secondaryAuth = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const safeUrl = u => /^https?:\/\//i.test(u) ? u : null;
+const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const adminEmails = ADMIN_USERNAMES.map(u => `${u}@${EMAIL_DOMAIN}`);
+
+/* ---------------- LOGIN / SESSION ---------------- */
+function showLogin(msg) {
+    $('loginLoading').classList.add('hidden');
+    $('loginForm').classList.remove('hidden');
+    $('loginScreen').classList.remove('hidden');
+    if (msg !== undefined) $('loginError').textContent = msg;
+}
+
+window.doLogin = async function (e) {
+    e.preventDefault();
+    const u = $('loginUser').value.trim().toLowerCase();
+    const p = $('loginPass').value;
+    $('loginError').textContent = '';
+    if (!u || !p) { $('loginError').textContent = 'Enter your username and password.'; return; }
+    $('loginBtn').disabled = true;
+    try {
+        await signInWithEmailAndPassword(auth, `${u}@${EMAIL_DOMAIN}`, p);
+    } catch (err) {
+        $('loginError').textContent = err.code === 'auth/too-many-requests'
+            ? 'Too many attempts. Please wait a few minutes and try again.'
+            : 'Incorrect username or password.';
+    }
+    $('loginBtn').disabled = false;
+};
+window.logout = () => signOut(auth);
+
+onAuthStateChanged(auth, async user => {
+    if (unsubPlans) { unsubPlans(); unsubPlans = null; }
+    if (unsubTeachers) { unsubTeachers(); unsubTeachers = null; }
+    teachers = []; plans = [];
+    if (!user) { $('loginPass').value = ''; showLogin(); return; }
+    if (!adminEmails.includes(user.email)) {
+        await signOut(auth);
+        showLogin('This page is for the Principal/Coordinator only. Teachers please use the teacher page.');
+        return;
+    }
+    $('loginScreen').classList.add('hidden');
+    if (!$('adminFilterDate').value) $('adminFilterDate').value = todayStr();
+
+    unsubTeachers = onSnapshot(collection(db, 'users'), s => {
+        teachers = s.docs.map(d => ({ uid: d.id, ...d.data() })).filter(t => t.role === 'teacher');
+        renderTable();
+        if (!$('manageTeachersModal').classList.contains('hidden')) renderManageList();
+    }, err => { console.error(err); alert('Could not load teachers: ' + err.message); });
+
+    subscribePlans();
+});
+
+function subscribePlans() {
+    if (unsubPlans) unsubPlans();
+    const d = $('adminFilterDate').value;
+    unsubPlans = onSnapshot(query(collection(db, 'plans'), where('date', '==', d)), s => {
+        plans = s.docs.map(x => ({ id: x.id, ...x.data() }));
+        renderTable();
+    }, err => { console.error(err); alert('Could not load plans: ' + err.message); });
+}
+
+/* ---------------- DASHBOARD ---------------- */
+// Used by the date picker and the Filter button
+window.renderAdminDashboard = subscribePlans;
+function renderTable() {
+    const active = teachers.filter(t => t.active).sort((a, b) => a.name.localeCompare(b.name));
+    let submitted = 0;
+    const rows = [];
+    const statusBadge = s => `<span class="px-2 py-1 text-xs font-semibold rounded-full ${s === 'Approved' ? 'bg-emerald-100 text-emerald-700' : s === 'Needs Revision' ? 'bg-rose-100 text-rose-700' : s === 'Draft' ? 'bg-slate-100 text-slate-600' : 'bg-blue-100 text-blue-700'}">${esc(s === 'Draft' ? 'Draft (not submitted)' : s)}</span>`;
+
+    active.forEach(t => {
+        const tp = plans.filter(p => p.teacherUid === t.uid).sort((a, b) => (a.className || '').localeCompare(b.className || ''));
+        if (tp.some(p => p.status !== 'Draft')) submitted++;
+        if (tp.length === 0) {
+            rows.push(`<tr class="hover:bg-slate-50">
+                <td class="p-3 font-semibold text-slate-900">${esc(t.name)}</td>
+                <td class="p-3">-</td><td class="p-3">-</td><td class="p-3">-</td>
+                <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-500">Not Submitted</span></td>
+                <td class="p-3 text-xs italic text-slate-500">None</td>
+                <td class="p-3 text-right"><span class="text-xs text-slate-400 italic">Pending</span></td></tr>`);
+        } else {
+            tp.forEach(p => rows.push(`<tr class="hover:bg-slate-50">
+                <td class="p-3 font-semibold text-slate-900">${esc(t.name)}</td>
+                <td class="p-3 font-bold text-indigo-600">${esc(p.className)}</td>
+                <td class="p-3 font-bold text-blue-600">${esc(p.subject)}</td>
+                <td class="p-3 text-sm truncate max-w-xs">${esc(p.topic)}</td>
+                <td class="p-3">${statusBadge(p.status)}</td>
+                <td class="p-3 text-xs italic text-slate-500 truncate max-w-xs">${esc(p.adminRemarks) || 'None'}</td>
+                <td class="p-3 text-right">${p.status === 'Draft'
+                    ? '<span class="text-xs text-slate-400 italic">Draft</span>'
+                    : `<button onclick="openReview('${esc(p.id)}')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-semibold">Review</button>`}</td></tr>`));
+        }
+    });
+
+    $('adminTableBody').innerHTML = rows.length ? rows.join('') : `<tr><td colspan="7" class="p-6 text-center text-slate-400">No active teachers yet. Click "Manage Teachers" to add them.</td></tr>`;
+    $('statTotalTeachers').innerText = active.length;
+    $('statSubmittedToday').innerText = submitted;
+    $('statPendingToday').innerText = active.length - submitted;
+}
+
+/* ---------------- REVIEW & FEEDBACK ---------------- */
+window.openReview = function (id) {
+    const p = plans.find(x => x.id === id);
+    if (!p) return;
+    activeModalPlanId = id;
+    $('modalTitle').innerText = `${p.className} - ${p.subject}: ${p.topic}`;
+    $('modalSubtitle').innerText = `Teacher: ${p.teacherName} | Date: ${p.date}`;
+    $('adminStatusSelect').value = p.status === 'Draft' ? 'Submitted' : p.status;
+    $('adminRemarksInput').value = p.adminRemarks || '';
+    const links = (p.videoLinks || []).map(l => safeUrl(l) ? `<a href="${esc(l)}" target="_blank" rel="noopener" class="text-blue-600 underline">${esc(l)}</a>` : esc(l)).join(', ') || 'None';
+    $('modalContentBody').innerHTML = `
+        <div class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div><strong>1. Aim:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.aim) || 'N/A'}</p></div>
+            <div><strong>2. Action:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.action) || 'N/A'}</p></div>
+            <div><strong>3. Analysis:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.analysis) || 'N/A'}</p></div>
+            <div><strong>4. Application:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.application) || 'N/A'}</p></div>
+            <div><strong>5. Assessment:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.assessment) || 'N/A'}</p></div>
+            <div><strong>6. Resources:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.resources) || 'N/A'}</p></div>
+            <hr>
+            <div><strong>Classwork:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.classwork) || 'N/A'}</p></div>
+            <div><strong>Homework:</strong> <p class="whitespace-pre-wrap mt-1">${esc(p.homework) || 'N/A'}</p></div>
+            <div><strong>Video Links:</strong> ${links}</div>
+            <div><strong>Attachment:</strong> ${esc(p.fileName) || 'None'}</div>
+        </div>`;
+    $('reviewModal').classList.remove('hidden');
+};
+window.closeReviewModal = function () { $('reviewModal').classList.add('hidden'); activeModalPlanId = null; };
+
+window.saveAdminFeedback = async function () {
+    if (!activeModalPlanId) return;
+    try {
+        await updateDoc(doc(db, 'plans', activeModalPlanId), {
+            status: $('adminStatusSelect').value,
+            adminRemarks: $('adminRemarksInput').value,
+            reviewedAt: serverTimestamp()
+        });
+        alert('Feedback and status saved!');
+        closeReviewModal();
+    } catch (err) {
+        console.error(err);
+        alert('Could not save feedback: ' + err.message);
+    }
+};
+
+/* ---------------- MANAGE TEACHERS ---------------- */
+function renderManageList() {
+    const list = [...teachers].sort((a, b) => a.name.localeCompare(b.name));
+    $('manageTeachersTableBody').innerHTML = list.length === 0
+        ? `<tr><td class="p-4 text-center text-slate-400 text-sm">No teachers added yet.</td></tr>`
+        : list.map(t => `
+        <tr class="hover:bg-slate-50">
+            <td class="p-3"><div class="font-semibold">${esc(t.name)}</div><div class="text-xs text-slate-500">username: ${esc(t.username)}${t.active ? '' : ' &middot; <span class="text-rose-500">deactivated</span>'}</div></td>
+            <td class="p-3 text-right">${t.active
+                ? `<button onclick="setTeacherActive('${esc(t.uid)}', false)" class="text-rose-500 font-semibold text-xs bg-rose-50 px-2.5 py-1 rounded">Deactivate</button>`
+                : `<button onclick="setTeacherActive('${esc(t.uid)}', true)" class="text-emerald-600 font-semibold text-xs bg-emerald-50 px-2.5 py-1 rounded">Reactivate</button>`}</td>
+        </tr>`).join('');
+}
+window.openManageTeachersModal = function () { renderManageList(); $('addTeacherMsg').textContent = ''; $('manageTeachersModal').classList.remove('hidden'); };
+window.closeManageTeachersModal = function () { $('manageTeachersModal').classList.add('hidden'); };
+
+window.setTeacherActive = async function (uid, active) {
+    if (!active && !confirm('Deactivate this teacher? They will no longer be able to log in or see their plans. Their saved plans are kept.')) return;
+    try { await updateDoc(doc(db, 'users', uid), { active }); }
+    catch (err) { alert('Could not update: ' + err.message); }
+};
+
+window.addNewTeacher = async function () {
+    const msg = $('addTeacherMsg');
+    msg.className = 'text-xs text-rose-600';
+    const name = $('newTeacherNameInput').value.trim().replace(/\s+/g, ' ');
+    const username = $('newTeacherUsername').value.trim().toLowerCase();
+    const pass = $('newTeacherPassword').value;
+    if (!name) { msg.textContent = 'Enter the teacher\'s full name.'; return; }
+    if (!/^[a-z0-9._-]{3,20}$/.test(username)) { msg.textContent = 'Username: 3-20 letters/numbers (a-z, 0-9, dot, dash, underscore), no spaces.'; return; }
+    if (ADMIN_USERNAMES.includes(username)) { msg.textContent = 'That username is reserved.'; return; }
+    if (pass.length < 6) { msg.textContent = 'Password must be at least 6 characters.'; return; }
+    msg.textContent = '';
+    $('addTeacherBtn').disabled = true;
+    try {
+        // A second Firebase app is used so creating the teacher does not log the admin out.
+        if (!secondaryAuth) secondaryAuth = getAuth(initializeApp(firebaseConfig, 'secondary'));
+        const cred = await createUserWithEmailAndPassword(secondaryAuth, `${username}@${EMAIL_DOMAIN}`, pass);
+        await setDoc(doc(db, 'users', cred.user.uid), { name, username, role: 'teacher', active: true, createdAt: serverTimestamp() });
+        await signOut(secondaryAuth);
+        $('newTeacherNameInput').value = ''; $('newTeacherUsername').value = ''; $('newTeacherPassword').value = '';
+        msg.className = 'text-xs text-emerald-600';
+        msg.textContent = `Added ${name}. Give them the username "${username}" and the password you set.`;
+    } catch (err) {
+        console.error(err);
+        msg.textContent = err.code === 'auth/email-already-in-use'
+            ? 'That username is already taken. Choose another (or reactivate the existing teacher).'
+            : 'Could not add teacher: ' + err.message;
+    }
+    $('addTeacherBtn').disabled = false;
+};
+</script>
+</body>
+</html>
